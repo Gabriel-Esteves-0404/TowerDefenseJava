@@ -1,18 +1,28 @@
-## Getting Started
+# TowerDefenseJava
 
-Welcome to the VS Code Java world. Here is a guideline to help you get started to write Java code in Visual Studio Code.
+Projeto da disciplina **Linguagem de Programação Orientada a Objetos (LPOO) - 2025.2**  
+Universidade de Pernambuco (UPE)  
 
-## Folder Structure
+## 👥 Integrantes
+- Gabriel Esteves dos Santos Silva  
+- [adicione outros se tiver em grupo]
 
-The workspace contains two folders by default, where:
+## 📌 Checkpoint 1
+**Objetivo:** Implementar o núcleo do jogo (Mapa, Inimigos e Loop).  
 
-- `src`: the folder to maintain sources
-- `lib`: the folder to maintain dependencies
+### O que foi implementado
+- Classe `Mapa`: cria grid 2D, define caminho fixo, spawn e base.  
+- Classe `Posicao`: representa coordenadas no grid.  
+- Classe `Inimigos`: percorrem automaticamente o caminho até a base.  
+- Classe `App`: loop principal que inicializa o mapa, inimigos e executa o jogo.  
 
-Meanwhile, the compiled output files will be generated in the `bin` folder by default.
+**Critérios atendidos:**
+- Inimigos percorrem o caminho e chegam até a base.  
+- Loop de jogo funcionando.  
+- HUD simples no console (spawn, base, início do loop).  
 
-> If you want to customize the folder structure, open `.vscode/settings.json` and update the related settings there.
-
-## Dependency Management
-
-The `JAVA PROJECTS` view allows you to manage your dependencies. More details can be found [here](https://github.com/microsoft/vscode-java-dependency#manage-dependencies).
+### ⚙️ Como compilar e executar
+No terminal (raiz do projeto):
+```bash
+javac -d bin -sourcepath src src/app/App.java
+java -cp bin app.App
