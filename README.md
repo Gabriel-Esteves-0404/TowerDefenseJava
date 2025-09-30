@@ -5,7 +5,6 @@ Universidade de Pernambuco (UPE)
 
 ## 👥 Integrantes
 - Gabriel Esteves dos Santos Silva  
-- [adicione outros se tiver em grupo]
 
 ## 📌 Checkpoint 1
 **Objetivo:** Implementar o núcleo do jogo (Mapa, Inimigos e Loop).  
