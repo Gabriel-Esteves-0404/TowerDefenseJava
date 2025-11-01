@@ -6,8 +6,8 @@ public class Mapa {
 
     private final int linhas;
     private final int colunas;
-    private boolean [][] mapa;
-    private ArrayList<Posicao>caminhoInimigo = new ArrayList<>();
+    private boolean [][] mapa; // dimensão do mapa
+    private ArrayList<Posicao>caminhoInimigo = new ArrayList<>(); // Array dinâmico das coordenadas do caminho dos inimigos
 
     // Construtor
 
@@ -38,7 +38,7 @@ public class Mapa {
                 return true;
             }
             return false; 
-        }
+        } // retorna true se a célula estiver dentro do mapa
 
         // getters
 
