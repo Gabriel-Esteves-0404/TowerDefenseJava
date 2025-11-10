@@ -1,12 +1,12 @@
 
------------------------------------------------------------<Classe Posicao> ---------------------------------------------------------------
+----------<Classe Posicao> --------------------
 - Possui os metodos getters retornam os valores inteiros da linha e coluna de uma Posicao 
 
 - Vai ser utilizado a priori na classe Mapa, para gerenciar as celulas presentes na Grid
 
 - Possui um @Override de equals, para comparação de posição, ou seja, as posições são comparadas com o equals
 
------------------------------------------------------------<Classe Mapa> -----------------------------------------------------------------
+----------<Classe Mapa> --------------------
 
 // Atributos e contrutor
 
@@ -27,7 +27,7 @@
 - <getCaminho()>: Retorna o ArrayList das posições do caminhoInimigos.
 - <getLinhas() e getColunas()>: retornas as linhas e colunas.
 
------------------------------------------------------------<Classe Inimigo> ---------------------------------------------------------------
+----------<Classe Inimigos> --------------------
 
 // Atributos e contrutor
 
@@ -46,7 +46,7 @@
 - <getPosicaoAtual()>: retorna a posicao Atual que o inimigo se encontra.
 - <getDanoBase()>: retorna o dano que o inimigo vai dar na base.
 
------------------------------------------------------------<Classe Torre> -----------------------------------------------------------------
+----------<Classe Torre> --------------------
 
 // Atributos e contrutor
 
@@ -66,7 +66,7 @@
 
 -<atualizarCooldown> este método diminui o cooldown e retorna o novo.
 
------------------------------------------------------------<Classe Projetil> --------------------------------------------------------------
+----------<Classe Projetil> --------------------
 
 
 // Atributos e construtor
@@ -83,7 +83,7 @@
 
 <getaDano()> retorna o dano que o projetil dá.
 
------------------------------------------------------------<Classe Banco>------------------------------------------------------------------
+----------<Classe Banco> --------------------
 
 //Atributos e construtor
 
@@ -103,7 +103,7 @@
 -<setSaldo()>: altera o saldo.
 
 
------------------------------------------------------------<Classe WaveManager>------------------------------------------------------------
+----------<Classe WaveManager> --------------------
 
 //Atributos e construtor
 
@@ -136,7 +136,7 @@
 -<getIndiceOndaAtual>: retorna o indice de onda Atual.
 
 
------------------------------------------------------------<Classe GameLoop>---------------------------------------------------------------
+----------<Classe GameLoop> --------------------
 
 //Atributos e construtor
 
@@ -166,7 +166,7 @@
 - <run>: aqui inicia a primeira onda e tem-se um laço com o while como parâmetro é utilizado o boolean "jogoAtivo" e enquanto for true é aplicados ticks.
 
 
------------------------------------------------------------<Classe Loja>------------------------------------------------------------------
+----------<Classe Loja> --------------------
 
 //Atributos e construtores
 
@@ -178,11 +178,11 @@
 
 - <comprarTorreNormal>: o mesmo do método anterior, porém custo da torre informado na classe (20).
 
------------------------------------------------------------<Classe TorreArqueira>------------------------------------------------------------------
+----------<Classe TorreArqueira> --------------------
 
 - Método herdado de torre, com valores dos atributos diferentes, herdando tudo.
 
------------------------------------------------------------<Classe Main>------------------------------------------------------------------
+----------<Classe Main> --------------------
 
 - é instanciado todos as classes, de inicio para teste é posto no jogo:
 
@@ -193,7 +193,7 @@
 - Apenas 1 onda.
 
 
--------------------------------------------------------------------------------------------------------------------------------------------
+--------------------------------------
 
 // Para compilar e rodar:
 
