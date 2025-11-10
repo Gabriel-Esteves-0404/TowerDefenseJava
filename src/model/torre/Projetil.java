@@ -21,6 +21,7 @@ public class Projetil {
 
         double dlinha = alvo.getPosicaoAtual().getLinha() - this.posicaoInicial.getLinha();
 
+        //Normalização
         double normalcol = dcol / distancia;
         double normallinha = dlinha / distancia;
 
@@ -34,14 +35,8 @@ public class Projetil {
     }
 
     public boolean colidir(){
-        if(alvo.getPosicaoAtual().equals(this.posicaoInicial)){
-            return true;
-        }
-        return false;
+        return(alvo.getPosicaoAtual().equals(this.posicaoInicial));
     }
-
-
-
 
     public int getDano(){
         return dano;

@@ -7,10 +7,11 @@ import model.torre.TorreArqueira;
 public class Loja {
 
     public Torre comprarTorreNormal(Banco banco, Posicao posicao) {
-        int custo = 10; // custo fixo da torre normal
+        double custo = 10.0; // custo fixo da torre normal
         if (banco.getSaldo() >= custo) {
             banco.setSaldo(banco.getSaldo() - custo);
-            return new Torre(posicao, 1, 2.0, custo, 0.0, 2);
+            Torre torre = new Torre(posicao, 1, 5, custo, 0, 2);
+            return torre;
         } else {
             System.out.println("Saldo insuficiente para comprar torre normal.");
             return null;
@@ -18,7 +19,7 @@ public class Loja {
     }
 
     public TorreArqueira comprarTorreArqueira(Banco banco, Posicao posicao) {
-        int custo = TorreArqueira.CUSTO;
+        double custo = TorreArqueira.CUSTO;
         if (banco.getSaldo() >= custo) {
             banco.setSaldo(banco.getSaldo() - custo);
             return new TorreArqueira(posicao);

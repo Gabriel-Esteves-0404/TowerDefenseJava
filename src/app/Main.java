@@ -12,7 +12,7 @@ import model.torre.TorreArqueira;
 public class Main {
     public static void main(String[] args) {
         Mapa mapa = new Mapa(5, 10);
-        Banco banco = new Banco(50);
+        Banco banco = new Banco(50.0);
         WaveManager ondas = new WaveManager();
         GameLoop jogo = new GameLoop(mapa, banco, ondas, 5);
 

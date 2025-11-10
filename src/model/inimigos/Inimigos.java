@@ -26,32 +26,33 @@ public class Inimigos {
     //Métodos
 
     public boolean movimentoInimigo(Mapa mapa) {
-        if (indiceCaminho >= mapa.getCaminho().size()) {
-            System.out.println("Game Over!");
+        if (indiceCaminho > mapa.getCaminho().size()-1) {
+            posicaoAtual = mapa.getBase();
             return false;
-        } else {
-            posicaoAtual = mapa.getCaminho().get(indiceCaminho);
-            System.out.println("Inimigo em: " + posicaoAtual); // <-- mostra a posição atual
-            indiceCaminho = indiceCaminho + this.velocidade;
-            return true;
         }
-    }
-        
+
+        posicaoAtual = mapa.getCaminho().get(indiceCaminho);
+        indiceCaminho = indiceCaminho + this.velocidade;
+        return true;
     
+    }
+
+        public boolean receberDano(Projetil projetil){
+        this.vidaInimigo -= projetil.getDano();
+        return this.vidaInimigo <= 0;
+        
+    } 
+        
+    // Getters
+
     public Posicao getPosicaoAtual(){
         return posicaoAtual;
     }
-    
-    public boolean receberDano(Projetil projetil){
-        this.vidaInimigo -= projetil.getDano();
-        if(this.vidaInimigo <= 0){
-        return true;
-        } 
-            return false;
-    } 
+
     public int getDanoBase() {
         return danoBase;
     }
+
 }
 
 

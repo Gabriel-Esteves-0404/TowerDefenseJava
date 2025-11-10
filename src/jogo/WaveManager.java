@@ -2,7 +2,6 @@ package jogo;
 
 import java.util.ArrayList;
 import java.util.List;
-import model.Mapa;
 import model.inimigos.Inimigos;
 
 public class WaveManager {
@@ -10,7 +9,6 @@ public class WaveManager {
     private int proximoSpawnTick;
     private int restanteNessaOnda;
     private int intervaloSpawn;
-    private int atrasoInicial;
     private int vidaPadraoInimigo;
     private int velocidadePadraoInimigo;
     private int recompensaPorKill;
@@ -20,55 +18,46 @@ public class WaveManager {
         this.proximoSpawnTick = 0;
         this.restanteNessaOnda = 0;
         this.intervaloSpawn = 0;
-        this.atrasoInicial = 0;
         this.vidaPadraoInimigo = 0;
         this.velocidadePadraoInimigo = 0;
         this.recompensaPorKill = 0;
 
     }
-    public void iniciarPrimeiraOnda(int tickAtual){
-        this.indiceDaOndaAtual = 0;
+    public void iniciarOnda(int tickAtual){
+        this.indiceDaOndaAtual += 1 ;
         this.restanteNessaOnda = 5;
         this.intervaloSpawn = 8;
-        this.atrasoInicial = 0;
-        this.vidaPadraoInimigo = 5;
+        this.vidaPadraoInimigo = 10;
         this.velocidadePadraoInimigo = 1;
         this.recompensaPorKill = 5;
-        this.proximoSpawnTick = tickAtual + this.atrasoInicial;
+        this.proximoSpawnTick = 0;
     }
 
-    public List<Inimigos> spawnsDoTick(int tickAtual, Mapa mapa){
+    public boolean haMaisSpawnsNaOnda(){
+        return(restanteNessaOnda > 0);
+    }
+
+    public List<Inimigos> spawnsDoTick(int tickAtual){
         List<Inimigos> novosInimigos = new ArrayList<>();
-
-        if(this.restanteNessaOnda == 0){
-            return novosInimigos;
-        }
-
-        if (this.proximoSpawnTick <= tickAtual){
-            Inimigos inimigos = new Inimigos(vidaPadraoInimigo, velocidadePadraoInimigo);
-            this.proximoSpawnTick += this.intervaloSpawn;
-            novosInimigos.add(inimigos);
-            this.restanteNessaOnda --;
-            return novosInimigos;   
-        }
-            return novosInimigos;
-        }
-
-        public boolean haMaisSpawnsNaOnda(){
-            if(restanteNessaOnda <= 0){
-                return false;
+        if(haMaisSpawnsNaOnda()){
+            if(proximoSpawnTick == 0){
+                proximoSpawnTick = (tickAtual + intervaloSpawn);
+                return novosInimigos;
             }
-            return true;
+            if(proximoSpawnTick <= tickAtual){
+                Inimigos inimigo = new Inimigos(vidaPadraoInimigo, velocidadePadraoInimigo);
+                proximoSpawnTick = (tickAtual + intervaloSpawn);
+                novosInimigos.add(inimigo);
+                restanteNessaOnda --;
+                return novosInimigos;   
+            }
         }
+        return novosInimigos;
+    }
 
         public boolean ondaConcluida(boolean inimigosAtivosVazios, boolean projeteisAtivosVazios) {
-            if (!haMaisSpawnsNaOnda() && inimigosAtivosVazios && projeteisAtivosVazios) {
-                return true;
-                }
-                    return false;
-                    
-                        }
-
+            return(!haMaisSpawnsNaOnda() && inimigosAtivosVazios && projeteisAtivosVazios);          
+        }
 
         public int getRecompensaPorKill(){
             return recompensaPorKill;

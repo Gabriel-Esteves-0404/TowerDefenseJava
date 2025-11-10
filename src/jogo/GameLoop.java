@@ -31,17 +31,10 @@ public class GameLoop {
         this.tick = 0;
     }
 
-    public void run(){
-        ondas.iniciarPrimeiraOnda(0);
-        while (jogoAtivo) {
-            tick();
-        }
-    }
-
     public void tick() {
         System.out.println("\n--- Tick " + tick + " ---");
-        List<Inimigos> novos = ondas.spawnsDoTick(tick, mapa);
-        if (novos != null && novos.size() > 0) {
+        List<Inimigos> novos = ondas.spawnsDoTick(tick);
+        if (novos != null && !novos.isEmpty()) {
             for (int i = 0; i < novos.size(); i++) {
                 inimigosAtivos.add(novos.get(i));
             }
@@ -53,38 +46,35 @@ public class GameLoop {
             if (aindaNoCaminho == false) {
                 vidaBase = vidaBase - inimigo.getDanoBase();
                 inimigosAtivos.remove(i);
-                i--;
+                i--; // eliminado da lista
             }
         }
 
         if (vidaBase <= 0) {
             jogoAtivo = false;
+            System.out.println("GAME OVER!!");
             return;
         }
 
         for (int j = 0; j < torresAtivas.size(); j++) {
             Torre torre = torresAtivas.get(j);
-            torre.atualizarCooldown(1);
+            torre.atualizarCooldown();
             if (torre.podeAtirar()) {
                 List<Inimigos> alvos = torre.inimigosNoAlcance(inimigosAtivos);
                 Inimigos alvo = torre.proximoAlvo(alvos);
                 if (alvo != null) {
-                boolean morreu = torre.atirar(alvo);
-                System.out.println("Torre atirou no inimigo em " + alvo.getPosicaoAtual());
-                if (morreu) {
-                    System.out.println("Inimigo morto! +" + ondas.getRecompensaPorKill() + " moedas. Saldo=" + banco.getSaldo());
-                    inimigosAtivos.remove(alvo);
-                
-
+                    boolean morreu = torre.atirar(alvo);
+                    System.out.println("Torre atirou no inimigo em " + alvo.getPosicaoAtual());
+                    if (morreu) {
+                        System.out.println("Inimigo morto! +" + ondas.getRecompensaPorKill() + " moedas. Saldo=" + (banco.getSaldo() + ondas.getRecompensaPorKill()));
+                        banco.setSaldo(banco.getSaldo() + ondas.getRecompensaPorKill());
+                        inimigosAtivos.remove(alvo);
+                    }
                 }
             }
-
-
-                }
-            }
-        
-
-        if (ondas.ondaConcluida(inimigosAtivos.size() == 0, true)) {
+        }
+      
+        if (ondas.ondaConcluida(inimigosAtivos.isEmpty(),projeteisAtivos.isEmpty())) {
             jogoAtivo = false;
             System.out.println("VITÓRIA!");
             return;
@@ -96,10 +86,18 @@ public class GameLoop {
 
         tick++;
     }
+
     public void adicionarTorre(Torre t) {
-    if (t != null) {
-        torresAtivas.add(t);
+        if (t != null) {
+            torresAtivas.add(t);
+        }
     }
-}
+
+    public void run(){
+        ondas.iniciarOnda(0);
+        while (jogoAtivo) {
+            tick();
+        }
+    }
 
 }

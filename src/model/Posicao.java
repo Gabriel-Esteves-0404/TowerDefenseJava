@@ -10,9 +10,6 @@ public class Posicao {
     // Construtor
 
     public Posicao(int linha, int coluna){
-        if (linha < 0 || coluna < 0) {
-            throw new IllegalArgumentException("Linha e coluna devem ser negativos.");
-        }
         this.linha = linha;
         this.coluna = coluna;
     }

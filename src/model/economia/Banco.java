@@ -1,30 +1,27 @@
 package model.economia;
 
 public class Banco {
-    private int saldo;
+    private double saldo;
 
-    public Banco(int saldo){
+    public Banco(double saldo){
         this.saldo = saldo;
     }
 
-    public boolean podeDebitar(int valor){
-        if(this.saldo  >= valor){
-            return true;
-        }
-        return false;
+    public boolean podeDebitar(double valor){
+        return(this.saldo  >= valor);
     }
-    public int debitar(int valor){
+    public double debitar(double valor){
         this.saldo -= valor;
         return saldo;
     }
-    public int creditar(int valor){
+    public double creditar(double valor){
         this.saldo += valor;
         return saldo;
     }
-    public int getSaldo(){
+    public double getSaldo(){
         return saldo;
     }
-    public void setSaldo(int novoSaldo) {
+    public void setSaldo(double novoSaldo) {
         this.saldo = novoSaldo;
     }
 }
