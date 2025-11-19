@@ -18,6 +18,11 @@ O projeto foi estruturado de forma modular, separando responsabilidades por clas
 
 Como executar:
 
+Remove-Item -Recurse -Force .\bin\* -ErrorAction Ignore
+$files = Get-ChildItem -Recurse -Filter *.java .\src\ | ForEach-Object { $_.FullName }
+javac -d bin $files
+java -cp bin app.Main
+
 Clonar o repositório:
 git clone https://github.com/Gabriel-Esteves-0404/TowerDefenseJava.git
 

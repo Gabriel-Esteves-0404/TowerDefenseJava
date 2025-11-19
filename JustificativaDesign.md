@@ -1,223 +1,36 @@
+## Justificativa de Design – Checkpoints 1, 2 e 3
 
-### Classe `Posicao`
+### Checkpoint 1 – Modelagem do mapa e caminho dos inimigos
 
-- Possui os metodos getters retornam os valores inteiros da linha e coluna de uma Posicao.
-- Vai ser utilizado a priori na classe `Mapa`, para gerenciar as celulas presentes na Grid.
-- Possui um `@Override` de `equals`, para comparação de posição, ou seja, as posições são comparadas com o `equals`.
+No Checkpoint 1, o foco do design foi estruturar a base do tabuleiro e do movimento dos inimigos. Para isso, foi criada a classe `Posicao`, que encapsula linha e coluna de uma célula da grade, com métodos de acesso e sobrescrita de `equals`. A decisão de representar posições como um objeto próprio facilita comparações, manuseio de listas de posições e torna o código mais expressivo do que trabalhar apenas com pares de inteiros soltos.
 
+A classe `Mapa` foi responsável por modelar a grade do jogo, utilizando um array bidimensional para representar as células. Cada célula pode ser marcada como construída ou não construível para torres, permitindo separar claramente a lógica de “onde posso construir” da lógica de movimento. Além disso, o mapa armazena o caminho pré-definido dos inimigos por meio de uma lista de `Posicao`, o que garante um movimento discreto, passo a passo, fácil de visualizar e de debugar. Essa escolha evita o acoplamento entre o movimento dos inimigos e detalhes de implementação da grade, e deixa o sistema preparado para futuros mapas com caminhos diferentes.
 
+Por fim, a classe base de inimigos foi pensada para trabalhar em cima desse caminho, com um método de movimento que recebe o `Mapa` e atualiza a posição atual passo a passo. Assim, todo o raciocínio de “onde o inimigo está” e “qual a próxima célula” é guiado pelo caminho do mapa, centralizando o controle de layout no `Mapa` e mantendo os inimigos focados em comportamento.
 
-### Classe `Mapa`
+---
 
-#### Atributos e Construtor
+### Checkpoint 2 – Torres, projéteis e sistema de combate
 
-- Cria um Array bidimensional booleano chamado `<mapa>` para informar se tal posição é true (pode construir torres) ou false (não pode construir torres) que tem como tamanho do array uma quatidade fianl de linhas e colunas.
+No Checkpoint 2, o objetivo de design foi construir um sistema de combate flexível e extensível, baseado em herança e polimorfismo. A classe abstrata `Torre` concentra o comportamento comum de todas as torres: dano base, intervalo de tiro, alcance, custo, cooldown e posição. Ela expõe métodos como `inimigosNoAlcance`, `proximoAlvo` e `atirar`, que definem o fluxo geral de ataque, enquanto detalhes específicos são delegados às subclasses. Essa abordagem permite adicionar novas torres sem modificar o código existente, respeitando o princípio de aberto/fechado.
 
-- Cria um Array dinâmico, esssa escolha foi feita para tornar mais simples, conforme for definindo o caminho dos inimigos a partir do tamanho do mapa.
+Foram implementadas torres especializadas, como `TorreArqueira`, `TorrePoison` e `TorreFrozen`. Cada uma delas personaliza a forma de causar dano: a arqueira foca em dano direto, a torre de veneno aplica dano ao longo de vários ticks, e a torre congelante reduz ou interrompe o movimento do inimigo. Esse design reforça o uso de polimorfismo, pois o GameLoop não precisa saber qual torre está em uso; ele apenas chama métodos da classe base. Do lado dos inimigos, a hierarquia `Inimigos` + subclasses (`InimigosZumbi`, `InimigosCorredor`, `InimigosBlindado`, `InimigosGolem`, `InimigosGolemitas`) encapsula diferentes combinações de vida, velocidade, dano e recompensa, permitindo variar o desafio de forma controlada.
 
-- Na definição do `<caminhoInimigo>` temos a divisão da quantidade de linhas por 2 para indicar o centro do mapa e pecorremos com for para pecorrer as colunas daquelas linhas e tornar o valor booleanos daquelas coordenadas como false (obs: se for impar, o truncamento joga pra o número anterior, ex: 5/2 = 2).
+A classe `Projetil` foi criada para separar a lógica de disparo da lógica de dano. Um projétil conhece sua posição, seu alvo e a forma de se mover, e ao colidir chama `receberDano` e, quando necessário, aplica efeitos de status por meio de métodos como `aplicarEfeitosNoAlvo`. Essa separação deixa o código mais modular: efeitos como veneno e congelamento são tratados pela lógica do inimigo (em `atualizarEfeitos`), enquanto o projétil se limita a representar o disparo em si. Assim, o sistema de combate fica organizado em camadas e se torna mais fácil de manter e expandir.
 
-#### Métodos
+---
 
-- `<estaDentro>` vai retornar true ou false indicando se a posição informada está dentro do mapa (true) ou fora (false).
+### Checkpoint 3 – Economia, upgrades e laço de jogo completo
 
-#### Getters
+No Checkpoint 3, o design foi expandido para contemplar economia, upgrades e o laço de jogo completo (GameLoop), incluindo ondas de inimigos e condições de vitória/derrota. A camada de economia foi representada pelas classes `Banco` e `Loja`. O `Banco` centraliza o saldo do jogador, enquanto a `Loja` é responsável pela compra de torres, verificando se há saldo suficiente e debitando o valor. Exceções como `SaldoInsuficienteException` e `NivelMaximoException` tornam os erros de uso mais claros, reforçando regras de negócio importantes (como não permitir upgrades infinitos).
 
-- `<getBase()>`: Última posição do caminhoInimigos (base).
-- `<getSpawn()>`: Primeira posição do caminhoInimigos.
-- `<getCaminho()>`: Retorna o ArrayList das posições do caminhoInimigos.
-- `<getLinhas()>` e `<getColunas()>`: retornas as linhas e colunas.
+A classe `Torre` passou a incorporar atributos de nível (`nivel` e `maxNivel`) e o método `melhorar`, que consome recursos do banco e aplica upgrades específicos definidos nas subclasses. Isso reforça a tomada de decisão do jogador: investir em novas torres ou aprimorar as existentes. A mecânica de inimigos especiais, como o `InimigosGolem` que se divide em `InimigosGolemitas` ao morrer, foi integrada tanto na morte por projétil quanto na morte por veneno, aumentando a profundidade estratégica sem complicar o GameLoop.
 
+O `GameLoop` e o `WaveManager` trabalham juntos para controlar a progressão da partida. O `WaveManager` define a composição das ondas, o intervalo de spawn e o número total de ondas, encapsulando toda a lógica de geração de inimigos em um único componente. Já o `GameLoop` coordena, a cada tick, a atualização dos inimigos (efeitos e movimento), a aplicação de dano na base, o disparo das torres, o avanço e colisão dos projéteis, a geração de novos inimigos (como golemitas) e, por fim, o spawn de novos inimigos da onda. A ordem dos eventos foi cuidadosamente escolhida para manter o jogo previsível e justo, com condições claras para GAME OVER (vida da base esgotada) e VITÓRIA (todas as ondas concluídas e sem inimigos ou projéteis ativos).
 
+Dentro do conjunto de torres especializadas, a `TorrePoison` e a `TorreFrozen` foram pensadas para introduzir mecânicas de controle de área e dano ao longo do tempo, indo além do simples “dano imediato” da `TorreArqueira`. A `TorrePoison` aplica um efeito de veneno no inimigo através de projéteis específicos, armazenando internamente a duração desse efeito e o dano por tick. Esse veneno não remove a importância do dano direto, mas o complementa: inimigos com muita vida podem ser finalizados alguns ticks depois, mesmo que saiam temporariamente do foco das torres. O efeito é processado no método `atualizarEfeitos` da classe base de inimigos, o que mantém o GameLoop limpo e permite que qualquer inimigo possa ser envenenado sem precisar duplicar lógica em subclasses.
 
-### Classe `Inimigos`
+Já a `TorreFrozen` foi desenhada para atuar como ferramenta de controle de multidão (crowd control), aplicando congelamento ou redução de movimento em inimigos atingidos por seus projéteis. Em vez de “teletransportar” a responsabilidade para o GameLoop, o inimigo mantém um contador interno de ticks congelados, também atualizado em `atualizarEfeitos`. Enquanto estiver sob efeito, o inimigo deixa de se mover (ou tem seu avanço reduzido), o que dá tempo extra para as outras torres causarem dano. Esse design cria uma sinergia clara entre as torres: a Frozen ganha tempo, a Poison garante dano contínuo e a Arqueira finaliza alvos enfraquecidos. Além disso, manter os efeitos encapsulados na lógica dos inimigos torna simples adicionar novos tipos de torres de controle no futuro, reaproveitando o mesmo padrão de efeitos por tick.
 
-#### Atributos e Construtor
-
-- Atributos: vidaInimimigo, velocidade, indiceCaminho, posicaoAtual, danoBase.
-
-- `<IndiceCaminho>`, inicialmente = 0, será o indice do ArrayList caminhoInimigos, que indicará a posição do inimigo. A `<posiçãoAtual>` será a posição indicada pelo caminhosInimigos apontada pelo indiceCaminho.
-
-#### Métodos
-
-- `<movimentoInimigo>` é um método booleano que vai verificar se ele chegou ao fim, caso passe do fim ou chegou lá. A posicaoAtual é recebida a posicao do mapa.getBase() e retorna o valor false (indicando futuramente que ele dar dano e some do jogo). Caso ainda não tenha chegado na base, é incrementado ele pecorre o caminhoInimigos conforme sua velocidade.
-
-- `<receberDano>` é um método que vai diminuir a vida do inimigo conforme o dano do projetil, após isso, ele verifica se o inimigo está vivo (false) ou morto (true), com isso o Gameloop tira ou não esse inimigo da lista de inimigos ativos.
-
-#### Getters
-
-- `<getPosicaoAtual()>`: retorna a posicao Atual que o inimigo se encontra.
-- `<getDanoBase()>`: retorna o dano que o inimigo vai dar na base.
-
-### Classe `Torre`
-
-#### Atributos e Construtor
-
-- Atributos: posicao, dano, intervaloTiro, custo, cooldown, alcance.
-
-#### Métodos
-
-- `<verificarAlcance>` este método booleano ele vai verificar se a posição de um inimigo ele está dentro (true) ou fora (false) do alcance.
-
-- `<inimigosNoAlcance>` este método ele vai pegar a lista de Inimigos Ativos e vai criar um novo ArrayList "inimigosNoAlcance" e vai colocar dentro dessa listas os inimigos ativos que possuirem um valor true quando forem usados no método verificarAlcance.
-
-- `<proximoAlvo>` este método retorna o inimigo mais próximo da base que esteja no alcance da torre (esse método de medida serve para um caminho horizontal que é o caminho que a inicio estou usando).
-
-- `<atirar>` este método recebe como variável um inimigo, cria um projetil e utiliza o método receberDano() no inimigo para diminuir sua vida. Redefini o cooldown para o intervalo de tira.
-
-- `<podeAtirar>` este método verifica se ainda há cooldown.
-
-- `<atualizarCooldown>` este método diminui o cooldown e retorna o novo.
-
-
-
-
-### Classe `Projetil`
-
-#### Atributos e Construtor
-
-- Atributos: dano, velocidade, posicaoInicial, alvo.
-
-#### Métodos
-
-- `<atualizarPosicao>`: esse método ele vai pegar as distancias de linhas e de colunas e dividir pela distancia euclidiana, entre o alvo e a torre (inicial do projetil), normalizando essa distancia, o valor é multiplicado pela velocidade e arrendondado para a céula mais próxima. Retorna uma posição.
-
-- `<colidir>` este método compara atráves do equals se o projetil atingiu o inimigo. Retorna booleano.
-
-#### Getter
-
-- `<getaDano()>` retorna o dano que o projetil dá.
-
-
-### Classe `Banco`
-
-#### Atributos e Construtor
-
-- Atributos: saldo.
-
-#### Métodos
-
-- `<podeDebitar>` este método booleano recebe um inteiro de entrada e verifica se tem saldo suficiente para debitar.
-
-- `<debitar>` este método recebe um valor de entrada que diminui no saldo, retorna o saldo.
-
-- `<creditar>` este método adciona um valor de entrada que aumenta no saldo, retorna o saldo.
-
-#### Getters e Setters
-
-- `<getSaldo()>`: retorna o saldo.
-- `<setSaldo()>`: altera o saldo.
-
-
-
-
-### Classe `WaveManager`
-
-#### Atributos e Construtor
-
-- Atributos:
-
-  - indiceDaOndaAtual ( em que onda está o jogo).
-  - proximoSpawnTick ( quando spawnará o próximo inimigo).
-  - restanteNessOnda( quantos inimigos restam nessa onda).
-  - intervaloSpawn (quanto tempo é pra nascer de inimigo em inimigo na onda).
-  - vidaPadraoInimigo (o quanto de vida que o inimigo terá naquela onda).
-  - velocidadePadraoInimigo (o quanto de velocidde o inimigo terá naquela onda).
-  - recomensaPorKill (valor que se ganha quando um inimigo é morto).
-
-- Construtor: O construtor se inicia neutro, para poder futuramente poder ser alterado seus dados conforme vai se passando as ondas, e para assim que instanciar o waveManager não vim a primeira onda, ela vim apenas quando chamar o método.
-
-#### Métodos
-
-- `<iniciarOnda>`: esse é o método que atribui valores aos atributos, inicialmente igual para todas as ondas.
-
-- `<haMaisSpawnNaOnda>`: verifica se há algum inimigo restante na onda.
-
-- `<spawnsDoTicks>`: este método verifica se há inimigos restantes na onda, caso tenha, ele faz outra verificação pra o inicio do jogo, que quando o proximoSpawnTick for 0 ele é atribuito o valor do intervalo de spawn (pre-definido) mais o tick atual. Após faz outra verificação para ver quando o proximoSpawnTick for igual ao intervaloSpawn instanciar um novo inimigo, diminui 1 do inimigos restantes, altera o proximoSpawnTick para (intervaloSpawn + tickAtual) e retorna o ArrayList dos inimigos. Caso o ProximoSpawnTick ainda não alcance o intervaloSpawn pré-estabelecido, apenas é retornada a lista de inimigos.
-
-- `<ondaConcluida>`: este método verifica se o os booleanos de (haMaisSpawnsNaOnda, inimigosAtivosVazios e projeteisAtivosVazio) for true, ele retorna como true também, representando que a onda foi concluida.
-
-#### Getters
-
-- `<getRecompensaPorKill>`: retorna o valor da recompensa por kill.
-- `<getIndiceOndaAtual>`: retorna o indice de onda Atual.
-
-
-
-
-### Classe `GameLoop`
-
-#### Atributos e Construtor
-
-- Atributos:
-
-  - mapa (onde vai ser instanciado o mapa).
-  - banco (onde vai ser instanciado o banco).
-  - ondas (onde vai ser instanciado o waveManager).
-  - inimigosAtivos (vai receber uma lista de inimigos que estão vivos no jogo).
-  - torresAtivas (vai receber uma lista de torres ativas no jogo).
-  - projeteisAtivos (vai receber uma lista de projeteis que estão no jogo intanciados).
-  - vidaBase (vida da base).
-  - tick (contador de tick do jogo, inicia-se 0).
-  - jogoAtivo (booleano que indica que se for true o jogo continua).
-
-#### Métodos
-
-- `<tick>`:
-  1. Inicia-se criando uma lista `<Inimigos>` que vai receber o método do waveManager `spawnsDoTick()`, que retornará a lista de inimigos que foram adcionados no tick, se forem adicionados, e caso sejam adcionados, eles são atribuidos aos inimigosAtivos (é utilizada lista para em casos futuros dê para spawnar mais de 1 inimigos por tick).
-  2. Utiliza um laço para varrer todos os indices da lista, aplica o `movimentoInimigo` no inimigo da vez, caso o retorno seja false (o inimigo chegou a base), é diminuido vida à base e é removido o inimigo da lista de inimigosAtivos.
-  3. Verifica se há vida na base, se não houver ele dar valor falso ao atributo de jogoAtivo e sai do método.
-  4. Utiliza um laço pra pecorrer a lista de torres ativas, instancia o objeto no indice, atualiza o cooldown da torre, verifica se pode atirar, caso seja true, ele vai criar uma lista "alvos" que vai ser a lista dos inimigos no alvo da torre e vai criar um inimigo "alvo" que vai ser o `proximoAlvo` de alvos, se `alvos` não for vazio. Após ele vai atribuir o boolean "morreu" ao inimigo atirado, caso seja true, é printado que o inimigo morreu e a recompensa adquirida, o saldo bancário e o saldo bancário é setado.
-  5. Verifica se a onda foi concluida e se for, o jogoAtivo é dado como false e sai do método.
-
-- `<adcionarTorre>`: método que acrescenta uma torre instanciada à lista de torres ativas.
-
-- `<run>`: aqui inicia a primeira onda e tem-se um laço com o while como parâmetro é utilizado o boolean "jogoAtivo" e enquanto for true é aplicados ticks.
-
-
-
-
-### Classe `Loja`
-
-#### Atributos e Construtores
-
-- Não há construtores nem atributos apenas métodos.
-
-#### Métodos
-
-- `<comprarTorreNormal>`: declarei um custo fixo da torre sendo 10.0, é verificado um se há saldo para o custo, se houver ele debita e cria a torre, caso não haja, ele apenas emiti uma mensagem de saldo insuficiente e retorna vazio.
-
-- `<comprarTorreNormal>`: o mesmo do método anterior, porém custo da torre informado na classe (20).
-
-
-
-### Classe `TorreArqueira`
-
-- Método herdado de torre, com valores dos atributos diferentes, herdando tudo.
-
-
-
-### Classe `Main`
-
-- é instanciado todos as classes, de inicio para teste é posto no jogo:
-
-- 2 torres (1 arqueira e 1 normal).
-- Mapa com 5 linhas e 10 colunas.
-- Inicio de saldo com 50.0.
-- base com 5 de hp.
-- Apenas 1 onda.
-
-
-
-### Compilação e Execução
-
-```bash
-// Para compilar e rodar:
-
-javac -d bin (Get-ChildItem -Recurse -Filter *.java | ForEach-Object { $_.FullName })
-java -cp bin app.Main
-
-
-
-
+Por fim, a classe `Main` atua apenas como ponto de configuração e entrada: instancia o mapa, o banco, o gerenciador de ondas, cria e posiciona as torres via `Loja`, aplica upgrades e inicia o loop de jogo. Isso mantém a responsabilidade de orquestração fora da lógica de domínio, deixando o projeto organizado em camadas bem definidas: modelo (mapa, inimigos, torres), economia, gerenciamento de ondas e laço principal do jogo. Esse conjunto de decisões de design resultou em um código modular, extensível e alinhado aos objetivos de cada checkpoint.
 

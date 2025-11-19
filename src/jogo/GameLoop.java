@@ -5,6 +5,8 @@ import java.util.List;
 import model.Mapa;
 import model.economia.Banco;
 import model.inimigos.Inimigos;
+import model.inimigos.InimigosGolem;
+import model.inimigos.InimigosGolemitas;
 import model.torre.Projetil;
 import model.torre.Torre;
 
@@ -32,57 +34,134 @@ public class GameLoop {
     }
 
     public void tick() {
-        System.out.println("\n--- Tick " + tick + " ---");
-        List<Inimigos> novos = ondas.spawnsDoTick(tick);
-        if (novos != null && !novos.isEmpty()) {
-            for (int i = 0; i < novos.size(); i++) {
-                inimigosAtivos.add(novos.get(i));
-            }
-        }
+        System.out.println("\n--- Tick " + tick + " | Onda " + ondas.getIndiceOndaAtual() + " ---");
 
+        
+        List<Inimigos> inimigosParaAdicionar = new ArrayList<>();
+
+        
         for (int i = 0; i < inimigosAtivos.size(); i++) {
-            Inimigos inimigo = inimigosAtivos.get(i);
-            boolean aindaNoCaminho = inimigo.movimentoInimigo(mapa);
-            if (aindaNoCaminho == false) {
+            Inimigos inimigo = inimigosAtivos.get(i);    
+            inimigo.atualizarEfeitos();
+
+            if (inimigo.estaMorto()) {
+                double recompensa = inimigo.getRecompensaPorKill();
+                double novoSaldo = banco.getSaldo() + recompensa;
+                banco.setSaldo(novoSaldo); 
+                
+                if (inimigo instanceof InimigosGolem) {
+                    inimigosParaAdicionar.add(new InimigosGolemitas());
+                    inimigosParaAdicionar.add(new InimigosGolemitas());
+                    System.out.println("\n Foram Spawnados 2 golemitas (morte por veneno)");
+                }
+                
+                inimigosAtivos.remove(i);
+                System.out.println("\nInimigo morto pelo veneno");
+                System.out.println(
+                    "\nInimigo morto! +" + recompensa + " moedas. Saldo=" + novoSaldo
+                );
+                i--;
+                continue;
+            }
+
+            boolean aindaNoCaminho = true;
+            if (!inimigo.estaCongelado()) {
+                aindaNoCaminho = inimigo.movimentoInimigo(mapa);
+            } 
+            else {
+                System.out.println("\nInimigo está sob efeito de slow.");
+            }
+            
+            if (!aindaNoCaminho) {
                 vidaBase = vidaBase - inimigo.getDanoBase();
                 inimigosAtivos.remove(i);
-                i--; // eliminado da lista
+                i--; 
             }
         }
 
+        
         if (vidaBase <= 0) {
             jogoAtivo = false;
-            System.out.println("GAME OVER!!");
+            System.out.println("\nGAME OVER!!");
             return;
         }
 
+        
         for (int j = 0; j < torresAtivas.size(); j++) {
             Torre torre = torresAtivas.get(j);
             torre.atualizarCooldown();
+
             if (torre.podeAtirar()) {
                 List<Inimigos> alvos = torre.inimigosNoAlcance(inimigosAtivos);
                 Inimigos alvo = torre.proximoAlvo(alvos);
                 if (alvo != null) {
-                    boolean morreu = torre.atirar(alvo);
-                    System.out.println("Torre atirou no inimigo em " + alvo.getPosicaoAtual());
-                    if (morreu) {
-                        System.out.println("Inimigo morto! +" + ondas.getRecompensaPorKill() + " moedas. Saldo=" + (banco.getSaldo() + ondas.getRecompensaPorKill()));
-                        banco.setSaldo(banco.getSaldo() + ondas.getRecompensaPorKill());
-                        inimigosAtivos.remove(alvo);
+                    Projetil proj = torre.atirar(alvo);
+                    if (proj != null) {
+                        projeteisAtivos.add(proj);
+                        System.out.println("\nTorre atirou no inimigo em " + alvo.getPosicaoAtual());
                     }
                 }
             }
         }
-      
-        if (ondas.ondaConcluida(inimigosAtivos.isEmpty(),projeteisAtivos.isEmpty())) {
+
+        
+        for (int i = 0; i < projeteisAtivos.size(); i++) {
+            Projetil p = projeteisAtivos.get(i);
+            p.atualizarPosicao();
+
+            if (p.colidir()) {
+                Inimigos alvo = p.getAlvo();
+
+                if (alvo != null && inimigosAtivos.contains(alvo)) {
+                    boolean morreu = alvo.receberDano(p);
+                    p.aplicarEfeitosNoAlvo();
+                    if (morreu) {
+                        double recompensa = alvo.getRecompensaPorKill();
+                        double novoSaldo = banco.getSaldo() + recompensa;
+                        System.out.println(
+                            "\nInimigo morto! +" + recompensa + " moedas. Saldo=" + novoSaldo
+                        );
+
+                        banco.setSaldo(novoSaldo);
+
+                        if (alvo instanceof InimigosGolem) {
+                            inimigosParaAdicionar.add(new InimigosGolemitas());
+                            inimigosParaAdicionar.add(new InimigosGolemitas());
+                            System.out.println("\n Foram Spawnados 2 golemitas");
+                        }
+
+                        inimigosAtivos.remove(alvo);
+                    }
+                }
+                projeteisAtivos.remove(i);
+                i--;
+            }
+        }
+
+
+        inimigosAtivos.addAll(inimigosParaAdicionar);
+        List<Inimigos> novos = ondas.spawnNasOnda(tick);
+        if (!novos.isEmpty()) {
+            for (int i = 0; i < novos.size(); i++) {
+                inimigosAtivos.add(novos.get(i));
+            }
+        }
+        
+        if (ondas.ultimaOndaTerminou(inimigosAtivos.isEmpty(), projeteisAtivos.isEmpty())) {
             jogoAtivo = false;
-            System.out.println("VITÓRIA!");
+            System.out.println("\nVITÓRIA!");
             return;
         }
-        System.out.println("Tick " + tick + 
-                   " | Vida da base: " + vidaBase + 
-                   " | Inimigos ativos: " + inimigosAtivos.size());
 
+        if (ondas.ondaConcluida(inimigosAtivos.isEmpty(), projeteisAtivos.isEmpty())) {  
+            ondas.proximaOnda();
+        }
+
+
+        System.out.println("Tick " + tick + 
+        " | Onda: " + ondas.getIndiceOndaAtual() +
+        " | Vida da base: " + vidaBase + 
+        " | Inimigos ativos: " + inimigosAtivos.size());
 
         tick++;
     }
@@ -94,7 +173,7 @@ public class GameLoop {
     }
 
     public void run(){
-        ondas.iniciarOnda(0);
+        ondas.iniciarOnda();
         while (jogoAtivo) {
             tick();
         }
