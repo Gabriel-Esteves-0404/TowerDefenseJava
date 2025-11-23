@@ -8,7 +8,7 @@ public class TorrePoison extends Torre {
     public static final double CUSTO = 15.0;
 
     public TorrePoison(Posicao posicao) {
-        super(posicao, 5, 2, CUSTO, 0, 3);
+        super(posicao, 4, 2, CUSTO, 0, 3);
         this.maxNivel = 3;
     }
 

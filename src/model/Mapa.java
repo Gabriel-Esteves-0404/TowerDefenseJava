@@ -6,8 +6,8 @@ public class Mapa {
 
     private final int linhas;
     private final int colunas;
-    private boolean [][] mapa; // dimensão do mapa
-    private ArrayList<Posicao>caminhoInimigo = new ArrayList<>(); // Array dinâmico das coordenadas do caminho dos inimigos
+    public boolean [][] mapa; // dimensão do mapa
+    private final ArrayList<Posicao>caminhoInimigo = new ArrayList<>(); // Array dinâmico das coordenadas do caminho dos inimigos
 
     // Construtor
 
@@ -19,20 +19,58 @@ public class Mapa {
             for (int j=0;j<colunas;j++){
                 mapa[i][j] = true; // tornando tudo construível
             }
-        this.caminhoInimigo = new ArrayList<>(); 
-        // Criando caminhos dos inimigos
-        int spawnCaminho = linhas/2; // Tornando caminho inicialmente no meio do mapa par
-        for(int k=0;k<colunas;k++) {
-                caminhoInimigo.add(new Posicao(spawnCaminho,k));
-                mapa[spawnCaminho][k] = false; // Tornando os caminhos como False ( não podem construir)
-            }   
-        }
+        int linhaMeio = linhas / 2; // ex: 10/2 = 5
+        caminhoHorizontal(linhaMeio, 0, 3); 
+        caminhoVertical(3, linhaMeio - 1, 2);
+        caminhoHorizontal(2, 4, 7);
+        caminhoVertical(7, 3, linhaMeio); 
+        caminhoHorizontal(linhaMeio, 8, colunas - 1);
+
     }
+}
         // Métodos
+
+                private void adicionarCaminho(int linha, int coluna) {
+            Posicao p = new Posicao(linha, coluna);
+            caminhoInimigo.add(p);
+            mapa[linha][coluna] = false; // false = não construível (caminho)
+        }
+
+        private void caminhoHorizontal(int linha, int colInicio, int colFim) {
+            if (colInicio <= colFim) {
+                for (int c = colInicio; c <= colFim; c++) {
+                    adicionarCaminho(linha, c);
+                }
+            } else {
+                for (int c = colInicio; c >= colFim; c--) {
+                    adicionarCaminho(linha, c);
+                }
+            }
+        }
+
+        private void caminhoVertical(int coluna, int linInicio, int linFim) {
+            if (linInicio <= linFim) {
+                for (int l = linInicio; l <= linFim; l++) {
+                    adicionarCaminho(l, coluna);
+                }
+            } else {
+                for (int l = linInicio; l >= linFim; l--) {
+                    adicionarCaminho(l, coluna);
+                }
+            }
+        }
+
+
 
         public boolean estaDentro (Posicao posicao) {
             return (0 <= posicao.getLinha() && posicao.getLinha() < this.linhas && 0 <= posicao.getColuna() && posicao.getColuna() < this.colunas); 
         } 
+        public boolean ehConstruivel(Posicao pos) {
+            int l = pos.getLinha();
+            int c = pos.getColuna();
+            return mapa[l][c]; // true = pode construir
+        }
+
 
         // getters
 

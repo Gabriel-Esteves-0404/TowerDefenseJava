@@ -35,8 +35,7 @@ public class GameLoop {
 
     public void tick() {
         System.out.println("\n--- Tick " + tick + " | Onda " + ondas.getIndiceOndaAtual() + " ---");
-
-        
+     
         List<Inimigos> inimigosParaAdicionar = new ArrayList<>();
 
         
@@ -153,11 +152,6 @@ public class GameLoop {
             return;
         }
 
-        if (ondas.ondaConcluida(inimigosAtivos.isEmpty(), projeteisAtivos.isEmpty())) {  
-            ondas.proximaOnda();
-        }
-
-
         System.out.println("Tick " + tick + 
         " | Onda: " + ondas.getIndiceOndaAtual() +
         " | Vida da base: " + vidaBase + 
@@ -166,10 +160,43 @@ public class GameLoop {
         tick++;
     }
 
+    public void rodarUmaOnda() {
+
+        while (jogoAtivo && 
+            !ondas.ondaConcluida(inimigosAtivos.isEmpty(), projeteisAtivos.isEmpty())) {
+
+            tick();
+
+            if (ondas.ultimaOndaTerminou(inimigosAtivos.isEmpty(), projeteisAtivos.isEmpty())) {
+                jogoAtivo = false;
+                System.out.println("\nVITÓRIA!");
+                return;
+            }
+        }
+
+        if (jogoAtivo) {
+            System.out.println("\n--- Fim da Onda " + ondas.getIndiceOndaAtual() + " ---");
+        }
+    }
+
+
+
     public void adicionarTorre(Torre t) {
         if (t != null) {
             torresAtivas.add(t);
         }
+    }
+
+    public List listaAtivaTorres(){
+        return torresAtivas;
+    }
+
+    public boolean SituacaoDoJogo(){
+        return this.jogoAtivo;
+    }
+
+    public int getVidaBase(){
+        return vidaBase;
     }
 
     public void run(){

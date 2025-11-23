@@ -8,7 +8,7 @@ public class TorreArqueira extends Torre {
     public static final double CUSTO = 10;
 
     public TorreArqueira(Posicao posicao) {
-        super(posicao, 7, 1, CUSTO, 0, 3);
+        super(posicao, 4, 1, CUSTO, 0, 3);
     }
 
     @Override

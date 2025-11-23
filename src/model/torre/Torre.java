@@ -8,9 +8,6 @@ import model.excecoes.NivelMaximoException;
 import model.excecoes.SaldoInsuficienteException;
 import model.inimigos.Inimigos;
 
-
-
-
 public abstract class Torre {
 
     protected Posicao posicao;
@@ -92,6 +89,10 @@ public abstract class Torre {
 
         public int getNivel() {
             return nivel;
+        }
+
+        public Posicao getPosicao(){
+            return posicao;
         }
 
         public int getMaxNivel() {

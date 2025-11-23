@@ -1,5 +1,7 @@
 package model;
 
+import model.excecoes.CoordenadaInvalidaException;
+
 public class Posicao {
 
     // Atributos
@@ -9,10 +11,16 @@ public class Posicao {
 
     // Construtor
 
-    public Posicao(int linha, int coluna){
+    public Posicao(int linha, int coluna) throws CoordenadaInvalidaException{
+        if(linha < 0){
+            throw new CoordenadaInvalidaException("Linha inválida: "+ linha);
+        }
+        if(coluna < 0){
+            throw new CoordenadaInvalidaException("Coluna inválida: " + coluna);
+        }
         this.linha = linha;
         this.coluna = coluna;
-    }
+        }
 
     // Métodos
 
