@@ -1,15 +1,20 @@
 package model.torre;
 
+import java.awt.Image;
 import model.Posicao;
+import model.animacao.Animacao;
+import model.animacao.CarregamentoSprites;
 import model.inimigos.Inimigos;
 
 public class TorrePoison extends Torre {
 
     public static final double CUSTO = 15.0;
+    private Animacao animDisparador;
 
     public TorrePoison(Posicao posicao) {
-        super(posicao, 4, 2, CUSTO, 0, 3);
+        super(posicao, 2, 2, CUSTO, 0, 3);
         this.maxNivel = 3;
+        carregarDisparadorAnimado();
     }
 
     @Override
@@ -52,12 +57,37 @@ public class TorrePoison extends Torre {
             }
         }
 
-        Projetil p = new Projetil(this.dano, 1.0, this.posicao, alvo);
+        Projetil p = new Projetil(this.dano, 1.1, this.posicao, alvo, "poison");
         p.configurarVeneno(danoPorTick, duracaoVeneno);
 
-        System.out.println("\n Torre Poison disparou projétil venenoso em " + alvo.getPosicaoAtual());
+        System.out.println("\n Torre Poison disparou projetil venenoso em " + alvo.getPosicaoAtual());
 
         this.cooldown = intervaloTiro;
+        if (animDisparador != null) animDisparador.reset();
         return p;
+    }
+
+    @Override
+    public void tickAnimacao() {
+        if (animDisparador != null && !animDisparador.terminou()) animDisparador.atualizar();
+    }
+
+    private void carregarDisparadorAnimado() {
+        String base = "assets/torres/poison/disparadorPoison/";
+        Image frame1 = carregarPrimeiroFrame(base + "disparador(1).png");
+        Image frame2 = carregarPrimeiroFrame(base + "disparador(2).png");
+        Image frame3 = carregarPrimeiroFrame(base + "disparador(3).png");
+        Image frame4 = carregarPrimeiroFrame(base + "disparador(4).png");
+        Image[] frames = new Image[]{frame1, frame2, frame3, frame4};
+        animDisparador = new Animacao(frames, 1, false);
+    }
+
+    private Image carregarPrimeiroFrame(String caminho) {
+        Image[] frames = CarregamentoSprites.carregarStripHorizontal(caminho, 1);
+        return (frames != null && frames.length > 0) ? frames[0] : null;
+    }
+
+    public Image getFrameDisparador() {
+        return animDisparador != null ? animDisparador.getFrameAtual() : null;
     }
 }

@@ -112,7 +112,7 @@ public class AssinaturasConsole {
 
         p = new Posicao(linha, coluna);
         
-        if (!mapa.ehConstruivel(p)) {
+        if (!mapa.podeConstruir(p)) {
             System.out.println("Essa célula NÃO permite construir torre.");
             return null;
         }

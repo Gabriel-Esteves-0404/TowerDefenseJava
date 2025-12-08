@@ -8,7 +8,7 @@ public class TorreFrozen extends Torre {
     public static final double CUSTO = 20.0;
 
     public TorreFrozen(Posicao posicao) {
-        super(posicao, 5, 2, CUSTO, 0, 3);
+        super(posicao, 2, 2, CUSTO, 0, 3);
         this.maxNivel = 3;
     }
 
@@ -37,7 +37,7 @@ public class TorreFrozen extends Torre {
             default -> 2;
         };
 
-        Projetil p = new Projetil(this.dano, 1.0, this.posicao, alvo);
+        Projetil p = new Projetil(this.dano, 1.1, this.posicao, alvo, "frozen");
         p.configurarCongelamento(duracaoCongelamento);
 
         System.out.println("\n Torre Frozen disparou projétil congelante em " + alvo.getPosicaoAtual());

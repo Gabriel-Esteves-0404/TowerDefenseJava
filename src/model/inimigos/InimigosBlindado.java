@@ -3,7 +3,8 @@ package model.inimigos;
 public class InimigosBlindado extends Inimigos{
 
     public InimigosBlindado(){
-        super(6,1,2,4);
+        super(12,1,2,3);
+        carregarFramesComParenteses("BLINDADO_WALK_", 7);
     } 
 
     @Override

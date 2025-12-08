@@ -14,7 +14,7 @@ public class WaveManager {
     private int restanteNessaOnda;
     private int intervaloSpawn;
     private boolean primeiroSpawn;
-    private final int TOTAL_DE_ONDAS = 5;
+    private final int TOTAL_DE_ONDAS = 7;
     private List<Inimigos> listaInimigosDaOndaAtual;
 
 
@@ -31,7 +31,7 @@ public class WaveManager {
         indiceDaOndaAtual = 1;
         listaInimigosDaOndaAtual = listaInimigosDeInicioDaOnda(indiceDaOndaAtual);
         restanteNessaOnda = listaInimigosDaOndaAtual.size();
-        intervaloSpawn = 5;
+        intervaloSpawn = 8;
         proximoSpawnTick = 0;
         primeiroSpawn = true;
 
@@ -44,11 +44,11 @@ public class WaveManager {
         List<Inimigos> listaInimigos = new ArrayList<>();
         if(indiceDaOndaAtual == 1){
             for(int i = 0; i < 5; i++){
-                InimigosGolem golem = new InimigosGolem();
-                listaInimigos.add(golem);
+                InimigosZumbi zumbi = new InimigosZumbi();
+                listaInimigos.add(zumbi);
             }
         }
-        else if(indiceDaOndaAtual < 6){
+        else if(indiceDaOndaAtual <= TOTAL_DE_ONDAS){
             for(int i = 0; i < indiceDaOndaAtual - 1; i++){
                 for(int j = 0; j < 2; j++){
                     InimigosZumbi zumbi = new InimigosZumbi();
@@ -69,7 +69,7 @@ public class WaveManager {
         indiceDaOndaAtual += 1 ;
         listaInimigosDaOndaAtual = listaInimigosDeInicioDaOnda(indiceDaOndaAtual);
         restanteNessaOnda = listaInimigosDaOndaAtual.size(); 
-        intervaloSpawn = 6;
+        intervaloSpawn = Math.max(5, 9 - indiceDaOndaAtual); // começa mais espaçado e reduz levemente
         proximoSpawnTick = 0;
         primeiroSpawn = true;
         System.out.println("\n=== Iniciando Onda " + indiceDaOndaAtual + 

@@ -100,7 +100,20 @@ public abstract class Torre {
         }
 
         public int getCustoUpgrade() {
-            return (int) (this.custo * 0.75 * this.nivel);
+            return switch (this.nivel) {
+                case 1 -> 15;
+                case 2 -> 25;
+                case 3 -> 35;
+                default -> 0;
+            };
+        }
+
+        public int getAlcance() {
+            return alcance;
+        }
+
+        public void tickAnimacao() {
+
         }
 
 

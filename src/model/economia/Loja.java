@@ -1,5 +1,6 @@
 package model.economia;
 
+import model.Mapa;
 import model.Posicao;
 import model.torre.TorreArqueira;
 import model.torre.TorreFrozen;
