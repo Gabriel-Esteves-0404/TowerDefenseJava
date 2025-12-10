@@ -117,12 +117,6 @@ Efeito: Congelamento (Lentidão)
 
 Essencial para controlar grupos de inimigos.
 
-🖼️ Capturas de Tela (adicione aqui)
-![Tutorial](assets/screenshots/tutorial.png)
-![Gameplay](assets/screenshots/gameplay.png)
-
-
-(Você pode colocar a imagem do tutorial que enviou — ficou muito bonita.)
 
 🧠 Arquitetura resumida
 
@@ -159,11 +153,6 @@ javac -d bin $files
 
 💠 Executar o jogo
 java -cp bin app.Main
-
-
-(Se o main estiver em outro pacote, use:)
-
-java -cp bin jogo.Main
 
 📝 Licença
 
