@@ -1,189 +1,171 @@
-🐆 README.md — TowerDefenseJava (Tower Defense Game)
+README.md — TOWER DEFENSE GAME
 
-Projeto concluído — Checkpoint 4 (LPOO 2025.2)
 
-🎮 TowerDefenseJava — BitGuardians
+🎮  Tower Defense Game — Defenda a Base. Proteja o Caminho.
 
-Projeto desenvolvido para a disciplina Linguagem de Programação Orientada a Objetos (LPOO) — 2025.2
-Universidade de Pernambuco (UPE)
-Aluno: Gabriel Esteves dos Santos Silva
+Tower Defense Game é um jogo do gênero Tower Defense, desenvolvido em Java + Swing, onde o jogador deve impedir que hordas de inimigos atravessem o mapa e destruam a base.
 
-📘 Descrição do Projeto
+Posicione torres estrategicamente, administre seus recursos, melhore suas defesas e sobreviva às ondas inimigas.
 
-BitGuardians é um jogo completo do gênero Tower Defense, no qual o jogador deve proteger sua base posicionando torres estrategicamente ao longo do caminho percorrido pelos inimigos.
-O projeto aplica rigorosamente os pilares da Programação Orientada a Objetos:
+Este projeto foi construído com foco em:
 
-Abstração
+Gameplay fluido
 
-Encapsulamento
+Arquitetura orientada a objetos
 
-Herança
+Boa estruturação de pacotes
 
-Polimorfismo
+Uso de sprites, animações e efeitos visuais
 
-Tratamento de Exceções
+🗺️ Como o jogo funciona
 
-O jogo conta com torres, projéteis, inimigos com diferentes comportamentos, economia, ondas progressivas e interface gráfica funcional.
+As áreas verdes permitem construir torres.
 
-🧩 Funcionalidades Implementadas (Checkpoints 1 → 4)
-✔ Checkpoint 1 — Núcleo do jogo
+O caminho marrom é por onde os inimigos avançam.
 
-Mapa baseado em grid 2D
+Seu objetivo: não deixar nenhum inimigo alcançar a base.
 
-Caminho fixo percorrido pelos inimigos
+Use sua economia para:
 
-Movimentação automática dos inimigos
+construir torres
 
-GameLoop baseado em ticks
+fazer upgrades
 
-Inimigos causando dano à base
+preparar-se para ondas mais fortes
 
-Condição de derrota
+👾 Inimigos
 
-✔ Checkpoint 2 — Torres, Disparo e Economia
+Cada inimigo possui vida, dano, velocidade e comportamentos únicos.
 
-Sistema de posicionamento de torres em células construíveis
+🧟 Zumbi
 
-Estratégias de mira e disparo automático
+Vida: 8
 
-Projéteis com velocidade, direção e colisão
+Dano: 1
 
-Economia com:
+Velocidade: 1
 
-custo das torres
+O mais básico — resistente, porém lento.
 
-recompensa por inimigos derrotados
+🏃 Corredor
 
-Gerenciamento de ondas (WaveManager)
+Vida: 5
 
-✔ Checkpoint 3 — Upgrades e Variedade
+Dano: 1
 
-Sistema de upgrades para torres
+Velocidade: 2
 
-Efeitos de status:
+Rápido e imprevisível — exige torres ágeis.
 
-Lentidão
+🛡️ Blindado
 
-Veneno / Dano por Tick
+Vida: 6
 
-Novos tipos de inimigos com:
+Dano: 2
 
-diferentes velocidades
+Velocidade: 1
 
-resistências
+Imune a efeitos especiais como veneno e congelamento.
 
-recompensas
+🪨 Golem
 
-Herança e polimorfismo aplicados
+Vida: 6
 
-✔ Checkpoint 4 — Versão Final
+Dano: 2
 
-Interface gráfica completa (HUD, renderização, sprites)
+Velocidade: 1
 
-7 ondas progressivas
+Perigoso ao morrer: divide-se em dois Golemitas.
 
-Diferentes torres funcionais
+🏰 Torres Disponíveis
 
-Feedback visual para dano, morte, congelamento e veneno
+Cada torre possui suas próprias características, custo, alcance e efeito especial.
 
-Tela de vitória e derrota
+🏹 Torre Arqueira
 
-Jogo totalmente jogável do início ao fim
+Dano: 2
 
-🏛 Justificativa de Design (Arquitetura OO)
+Cooldown: 2
 
-O projeto foi estruturado de forma modular e extensível, respeitando o princípio de Responsabilidade Única.
-Destaques arquiteturais:
+Alcance: 3
 
-🔹 Inimigos
+Efeito: Flecha rápida
 
-Inimigos é uma classe abstrata que define atributos essenciais (vida, velocidade, posição, animação).
-Subclasses como Zumbi, Golem e Golemitas implementam comportamentos específicos.
+Ideal contra inimigos velozes.
 
-🔹 Torres
+🧪 Torre Poison
 
-Torre também é abstrata, permitindo criar torres com:
+Dano: 2
 
-diferentes alcances
+Cooldown: 2
 
-cadências
+Alcance: 3
 
-tipos de projétil
+Efeito: Veneno contínuo
 
-status effects
+Excelente contra inimigos de alta vida.
 
-O polimorfismo garante que o GameLoop trate qualquer torre ou inimigo de forma uniforme.
+❄️ Torre Frozen
 
-🔹 GameLoop
+Dano: 2
 
-Responsável por orquestrar:
+Cooldown: 2
 
-movimento dos inimigos
+Alcance: 3
 
-disparo das torres
+Efeito: Congelamento (Lentidão)
 
-atualização das animações
+Essencial para controlar grupos de inimigos.
 
-spawn das ondas
+🖼️ Capturas de Tela (adicione aqui)
+![Tutorial](assets/screenshots/tutorial.png)
+![Gameplay](assets/screenshots/gameplay.png)
 
-efeitos de veneno, lentidão e congelamento
 
-🔹 Separação por pacotes
+(Você pode colocar a imagem do tutorial que enviou — ficou muito bonita.)
 
-model (lógica principal)
+🧠 Arquitetura resumida
 
-jogo (loop, controlador geral)
+Projeto dividido em pacotes:
 
-ui (interface gráfica)
+model/          # Inimigos, Torres, Projéteis, Economia, Animações
+ui/             # GamePainel, HUD, Janelas
+jogo/           # GameLoop, WaveManager, controlador do jogo
+assets/         # Sprites PNG, animações e decoração
 
-assets (sprites e animações)
 
-Essa divisão fortalece encapsulamento e manutenção.
+O motor do jogo é baseado em:
 
-▶️ Como Executar o Projeto
-1. Clonar o repositório
-git clone https://github.com/Gabriel-Esteves-0404/TowerDefenseJava.git
+GameLoop com ticks
 
-2. Compilar o projeto (Windows PowerShell)
-Remove-Item -Recurse -Force .\bin\* -ErrorAction Ignore
+Herança para inimigos e torres
+
+Polimorfismo nos projéteis
+
+Swing para renderização
+
+Sprites e rotação com AffineTransform
+
+▶️ Como executar o jogo
+💠 Pré-requisitos
+
+Java 17+
+
+Terminal PowerShell ou equivalente
+
+💠 Compilar o projeto
 $files = Get-ChildItem -Recurse -Filter *.java .\src\ | ForEach-Object { $_.FullName }
 javac -d bin $files
 
-3. Executar
+💠 Executar o jogo
 java -cp bin app.Main
 
 
-Dependendo da versão do projeto, o main pode estar em:
+(Se o main estiver em outro pacote, use:)
 
 java -cp bin jogo.Main
 
-🛠 Tecnologias Utilizadas
+📝 Licença
 
-Java 17
-
-VS Code
-
-Git & GitHub
-
-Swing (Interface Gráfica)
-
-Sprites PNG para animações
-
-🚀 Próximos Passos / Extensões Futuras
-
-Melhorar efeitos visuais e animações
-
-Inserir sons de disparo, hit e morte
-
-Criar novas torres (Sniper, Bombarda, Laser)
-
-Criar novo mapa com múltiplos caminhos
-
-Sistema de dificuldade dinâmica
-
-Tela de pausa e opções
-
-📄 Licença
-
-Projeto livre para fins educacionais e aprendizado.
-© 2025 — Gabriel Esteves dos Santos Silva
+Projeto aberto para fins educacionais e demonstrativos.
+© 2025 — Gabriel Esteves dos Santos Silva.
