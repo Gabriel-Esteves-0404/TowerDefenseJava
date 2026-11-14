@@ -1,4 +1,6 @@
-README.md — TOWER DEFENSE GAME
+# Tower Defense Game
+
+![Capa do jogo](assets/capa/capa.png)
 
 
 🎮  Tower Defense Game — Defenda a Base. Proteja o Caminho.
@@ -148,8 +150,15 @@ Java 17+
 Terminal PowerShell ou equivalente
 
 💠 Compilar o projeto
+
+Windows (PowerShell):
+
 $files = Get-ChildItem -Recurse -Filter *.java .\src\ | ForEach-Object { $_.FullName }
 javac -d bin $files
+
+Linux/macOS:
+
+javac -d bin $(find src -name '*.java')
 
 💠 Executar o jogo
 java -cp bin app.Main
@@ -158,3 +167,7 @@ java -cp bin app.Main
 
 Projeto aberto para fins educacionais e demonstrativos.
 © 2025 — Gabriel Esteves dos Santos Silva.
+
+📚 Documentação
+
+As decisões de design de cada etapa do projeto estão em docs/justificativa-design.md e docs/design-justificativa-ui.md.
